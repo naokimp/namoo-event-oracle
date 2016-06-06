@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+<mapper namespace="com.namoo.event.dao.sqlmap.mapper.EventMapper">
+    
+    <resultMap type="Event" id="result-event">
+    	<id property="id" column="id" javaType="int"/>
+    	<result property="name" column="name" javaType="string"/>
+    	<result property="regDate" column="reg_date" javaType="date"/>
+    	<result property="subject" column="subject" javaType="string"/>
+    	<result property="description" column="description" javaType="string"/>
+    	<association property="largeImage" javaType="ImageFile">
+    		<result property="fileName" column="lg_img_name" javaType="string"/>
+    		<result property="contentType" column="lg_img_type" javaType="string"/>
+    	</association>
+    	<association property="smallImage" javaType="ImageFile">
+			<result property="fileName" column="sm_img_name" javaType="string"/>
+    		<result property="contentType" column="sm_img_type" javaType="string"/>    	
+    	</association>
+    </resultMap>
+    
+    <select id="selectAllEvents" resultMap="result-event">
+    	SELECT
+    		id,
+    		name,
+    		reg_date,
+    		subject
+    	FROM event_tb
+    </select>
+    
+    <select id="selectEvent" parameterType="int" resultMap="result-event">
+    	SELECT
+    		id,
+    		name,
+    		reg_date,
+    		subject,
+    		description, 
+			lg_img_name,
+			lg_img_type,
+			sm_img_name,
+			sm_img_type
+    	FROM event_tb
+    	WHERE id = #{id}
+    </select>
+
+	<insert id="insertEvent" parameterType="Event">
+		INSERT 
+		INTO event_tb ( 
+			id, name, reg_date, subject, description, 
+			lg_img_name, lg_img_type, sm_img_name, sm_img_type )
+		VALUES (
+			event_seq.nextval, #{name}, #{regDate}, #{subject}, #{description}, 
+			#{largeImage.fileName}, #{largeImage.contentType}, #{smallImage.fileName}, #{smallImage.contentType} )
+	</insert>
+	
+	<update id="updateEvent" parameterType="Event">
+		UPDATE 
+			event_tb
+		SET 
+			name = #{name}, subject = #{subject}, description = #{subject},
+			lg_img_name = #{largeImage.fileName}, lg_img_type = #{largeImage.contentType},
+			sm_img_name = #{smallImage.fileName}, sm_img_type = #{smallImage.contentType}
+		WHERE id = #{id}
+	</update>
+	
+	<delete id="deleteEvent" parameterType="int">
+		DELETE 
+		FROM event_tb 
+		WHERE id = #{id}
+	</delete>
+
+</mapper>
